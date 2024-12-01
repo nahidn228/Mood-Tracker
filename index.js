@@ -1,15 +1,13 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
+const { MongoClient, ServerApiVersion } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 5000;
+
 //middleware
 app.use(cors());
-app.use(express());
-
-
-
-const { MongoClient, ServerApiVersion } = require("mongodb");
+app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.dssil.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -25,7 +23,18 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    //await client.connect();
+    // await client.connect();
+
+    const modeCollection = client.db("modeDB").collection("mode");
+
+    app.post("/mood", async (req, res) => {
+      const newModes = req.body;
+      console.log(newModes);
+
+      const result = await modeCollection.insertOne(newModes);
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
