@@ -27,11 +27,19 @@ async function run() {
 
     const modeCollection = client.db("modeDB").collection("mode");
 
+    //Create
     app.post("/mood", async (req, res) => {
       const newModes = req.body;
       console.log(newModes);
 
       const result = await modeCollection.insertOne(newModes);
+      res.send(result);
+    });
+
+    //Read
+    app.get("/mood", async (req, res) => {
+      const cursor = modeCollection.find();
+      const result = await cursor.toArray();
       res.send(result);
     });
 
